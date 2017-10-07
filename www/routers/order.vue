@@ -11,6 +11,38 @@
   .section{padding-bottom:1.2rem;padding-top:0 !important}
   .gift{padding-top:.3rem;width:100% !important}
   .weixin_bot .weixin_bot_box span{font-size:.27rem !important}
+  .large{
+    border:0px solid red;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-color: black;
+    display: block;
+    float: none;
+    position: fixed;
+    z-index:9999;
+    top:0;
+    img{
+      width: 100%;
+      height:270px !important;
+    }
+
+  }
+  .clear{
+    border: 1px solid #778899;
+    border-radius: 50%;
+    -moz-border-radius:50%;
+    -webkit-border-radius:50%;
+    width:.6rem;
+    height: .6rem;
+    /* margin-left: 6.8rem;
+     margin-top: .3rem;*/
+    float: right;
+    color: #778899;
+    font-size: .4rem;
+    margin-right: .3rem;
+    margin-top: .3rem;
+  }
 </style>
 <template>
   <div>
@@ -22,7 +54,7 @@
           <div class="swiper-container">
             <div class="swiper-wrapper">
               <div class="swiper-slide" v-for="image in house_image">
-                <a href="javascript:;">
+                <a href="javascript:;" @click="enlarge">
                   <img v-if="image" :src="$prefix + '/' + image" alt="">
                   <img v-else :src="$prefix + '/upload/2017-08-27/6404b4de960b81fc5403c870aefcea34.png'" alt="">
                 </a>
@@ -34,14 +66,31 @@
           </div>
         </div>
       </div>
+      <!--点击出现放大图片-->
+      <div v-show="large" class="large">
+        <div class="clear" @click="cancel">x</div>
+        <div style="clear: both;"></div>
+        <div class="detail-container" style="position:relative !important;top:26.5%!important;">
+          <div id="slideBox" class="slideBox">
+            <div class="swiper-container">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide" v-for="image in house_image">
+                  <a href="javascript:;">
+                    <img v-if="image" :src="$prefix + '/' + image" alt="">
+                    <img v-else :src="$prefix + '/upload/2017-08-27/6404b4de960b81fc5403c870aefcea34.png'" alt="">
+                  </a>
+                </div>
+              </div>
+              <!--<div class="banner-page">
+                <span class="pageState"><span id="picIndex">1</span>/{{house_image.length}}</span>
+              </div>-->
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="build_price_wrap clearfix">
-<<<<<<< HEAD
-        <span v-if="zdh === '独栋'"><i v-text="fybh" style="color:black"></i></span>
+        <span v-if="zdh.indexOf('独栋') > -1"><i v-text="fybh" style="color:black"></i></span>
         <span v-else><i v-text="zdh" style="color:black"></i> - <i v-text="fybh" style="color:black"></i></span>
-=======
-        <span v-if="zdh.indexOf('独栋') > -1"><i v-text="zdh" style="color:black"></i> - <i v-text="fybh" style="color:black"></i></span>
-        <span v-else><i v-text="fybh" style="color:black"></i></span>
->>>>>>> upomcnx/master
         <span><i v-text="monthly_price" style="color:#e01222"></i><i v-if="monthly_price != null" style="color:black">元/月</i></span>
         <span v-text="daily_price" style="color:#e01222"></span><i v-if="daily_price != null">元/㎡/天</i>
       </div>
@@ -98,6 +147,7 @@
     components: {header1, footer1},
     data () {
       return {
+        large:false,
         daily_price:0, //日价格
         monthly_price:0, //月价格
         room_area:0, //面积
@@ -128,6 +178,16 @@
       }
     },
     methods: {
+      cancel(){
+          $("body").css({"overflow":"auto"});
+          $("html").css({"overflow":"auto"});
+          this.large = false;
+      },
+      enlarge(){
+          $("body").css({"overflow":"hidden"});
+          $("html").css({"overflow":"hidden"});
+          this.large = true;
+      },
       //获取某一办公楼详情
       getPerDetail(){
         var _this = this;
@@ -162,7 +222,7 @@
               _this.zdh = data.zdh || '暂无数据';
               _this.fybh = data.fybh || '暂无数据';
               _this.wygs = data.wygs || '暂无数据';
-              _this.fjcg = data.fjcg || '暂无数据';
+              _this.fjcg = !data.fjcg ? '暂无数据' : data.fjcg + "m";
               _this.fjzt = data.fjzt || '暂无数据';
               _this.name = data.name || '暂无数据';
               _this.phone = data.phone || '暂无数据';

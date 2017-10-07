@@ -48,6 +48,8 @@
 .supply_msg_box dd.supply_house{margin-top:0 !important}
 .hilight a{color:#476CBA !important}
 .cell > dd{float: left;margin-right: .3rem;margin-bottom: .06rem;}
+  .tagClass{font-size: 0.5em !important;}
+  .zc{background-color:#ef104e !important;color:#FFF !important;font-size: 0.5em !important;}
 </style>
 <template>
   <div>
@@ -244,18 +246,14 @@
                 </dt>
                 <dd class="supply_msg_box">
                   <dl>
-<<<<<<< HEAD
-                    <dd class="supply_house">{{item.topic}}&nbsp;&nbsp;<span v-if="item.zdh !== '独栋'">{{item.zdh}} - </span>{{item.fybh}}</dd>
-=======
-                    <dd v-if="item.zdh.indexOf('独栋') > -1" class="supply_house">{{item.topic}}&nbsp;&nbsp;{{item.zdh}} - {{item.fybh}}</dd>
-                    <dd v-else class="supply_house">{{item.topic}}&nbsp;&nbsp;{{item.fybh}}</dd>
->>>>>>> upomcnx/master
+                    <dd v-if="item.zdh.indexOf('独栋') > -1" class="supply_house">{{item.topic}}&nbsp;&nbsp;{{item.fybh}}</dd>
+                    <dd v-else class="supply_house">{{item.topic}}&nbsp;&nbsp;{{item.zdh}} - {{item.fybh}}</dd>
                     <dd class="supply_color ellipsis">{{item.district}}</dd>
                     <dd>
                       <dl class="cell clearfix">
                         <dd>{{item.housing_area === '0.0' ? '': item.housing_area}}㎡</dd>
                         <dd v-if="item.lc">{{item.lc}}层</dd>
-                        <dd v-if="item.fjzt">{{item.fjzt}}</dd>
+                        <dd v-if="item.decoration_level" class="tagClass zc" style="font-size: 0.22rem !important;padding: 0.03rem;">{{item.decoration_level}}</dd>
                       </dl>
                     </dd>
                   </dl>
@@ -341,6 +339,8 @@
       }
     },
     mounted(){
+      $("body").removeAttr("style");
+      $("html").removeAttr("style");
       this.init();
 
       //下滑时，条件tab固定
@@ -461,7 +461,7 @@
                 return;
             }
             else if(ap && ep){
-                this.para.price_dj = JSON.stringify([parseInt(ap), parseInt(ap)]);
+                this.para.price_dj = JSON.stringify([parseInt(ap), parseFloat(ep)]);
             }
         }
 
@@ -751,26 +751,27 @@
           "code": "30000001"
         }, this_ = this;
 
+
         this.currentFilterTab = 'nth';
         let successCb = function (result) {
           Indicator.close();
           this_.loading = false;
 
           this_.resultData = this_.resultData.concat(result.data.data);
-          if (result.data.data.buildings < this_.para.items_perpage) {
+          if (result.data.data.length < this_.para.items_perpage) {
             this_.noMore = true;
           }
           if (this_.resultData.length <= 0) {
             Toast({
               message: '抱歉,暂无符合条件的房源!',
               position: 'middle',
-              duration: 3000
+              duration: 1000
             });
           } else if (this_.resultData.length > 0 && result.data.data.length == 0) {
             Toast({
               message: '已经获得当前条件的所有房源!',
               position: 'middle',
-              duration: 3000
+              duration: 1000
             });
           }
         };
@@ -779,7 +780,7 @@
           Toast({
             message: '抱歉,暂无符合条件的房源!',
             position: 'middle',
-            duration: 3000
+            duration: 1000
           });
         };
 

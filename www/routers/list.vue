@@ -336,6 +336,10 @@
       }
     },
     mounted(){
+        //jquery中删除style样式
+      $("body").removeAttr("style");
+      $("html").removeAttr("style");
+      /*console.log("mounted=================",this.para.curr_page);*/
       this.init();
 
       //下滑时，条件tab固定
@@ -360,7 +364,7 @@
       });
     },
     created: function () {
-
+        /*console.log("created=================",this.para.curr_page);*/
     },
     computed: {
       unitword(){
@@ -378,6 +382,7 @@
         if(this.$route['query']['keyword']){
           this.para.search_keywork = this.$route['query']['keyword'];
         }
+
         this.resetGetData();
         this.getFilters();
 
@@ -457,7 +462,7 @@
                 return;
             }
             else if(ap && ep){
-                this.para.price_dj = JSON.stringify([parseInt(ap), parseInt(ap)]);
+                this.para.price_dj = JSON.stringify([parseInt(ap), parseFloat(ep)]);
             }
         }
 
@@ -608,7 +613,7 @@
             if(value==="不限"){
                 this.para.district1 = code;
                 this.para.business1 = "";
-                $('h2.district-h').html(this.where || value);
+                 var a = $('h2.district-h').html(this.where || value);
             }
             else{
                 this.para.business1 = code;
@@ -725,7 +730,7 @@
       },
       resetGetData: function () {
         this.noMore = false;
-        this.loading = false;
+        this.loading = true;
 
         this.para.curr_page = 1;
         this.resultData = [];
@@ -763,16 +768,16 @@
           Indicator.close();
           this_.loading = false;
           this_.resultData = this_.resultData.concat(result.data.data.buildings);
-          if (result.data.data.buildings < this_.para.items_perpage) {
+          if (result.data.data < this_.para.items_perpage) {
             this_.noMore = true;
           }
-          if (this_.resultData.length == 0) {
+          if (this_.resultData.length <= 0) {
             Toast({
               message: '抱歉,暂无符合条件的房源!',
               position: 'middle',
               duration: 3000
             });
-          } else if (this_.resultData.length > 0 && result.data.data.buildings.length == 0) {
+          } else if (this_.resultData.length > 0 && result.data.data.length == 0) {
             Toast({
               message: '已经获得当前条件的所有楼盘!',
               position: 'middle',
@@ -809,11 +814,13 @@
           }
         });
       },
-
+      //这块是干什么的
       loadMore(){
+          /*console.log("loadMore1=================",this.para.curr_page);*/
         if (!this.loading && !this.noMore) {
           this.loading = true;
           this.para.curr_page += 1;
+            /*console.log("loadMore2=================",this.para.curr_page);*/
           this.getData();
         }
       }

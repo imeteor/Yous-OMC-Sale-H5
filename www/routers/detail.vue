@@ -1,6 +1,7 @@
 <style scoped lang="less">
   @import "../resources/css/website/detail.less";
-  @import "../resources/plugin/swiper/css/swiper.css"; /*swiper 轮播*/
+  @import "../resources/plugin/swiper/css/swiper.css"; /*swiper 轮播white-space  ellipsis*/
+
   .detail-icon{width:0.4rem !important;height:0.4rem !important}
   .bt{border-top:2px solid #e5e5e6}
   .houseInfo div.intro{text-align:center}
@@ -17,6 +18,40 @@
   .dz_msg{width:65%}
   .dz_msg span:first-child{float:left;margin-right:.2rem}
   .dz_msg span:nth-child(2) > i:first-child{color:red;margin-right:.04rem !important}
+  .large{
+    border:0px solid red;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    background-color: black;
+    display: block;
+    float: none;
+    position: absolute;
+    z-index:9999;
+    top:0;
+    img{
+      width: 100%;
+      height:270px !important;
+      margin-top: 2.5rem;
+
+    }
+
+  }
+  .clear{
+    border: 1px solid #778899;
+    border-radius: 50%;
+    -moz-border-radius:50%;
+    -webkit-border-radius:50%;
+    width:.6rem;
+    height: .6rem;
+    /* margin-left: 6.8rem;
+     margin-top: .3rem;*/
+    float: right;
+    color: #778899;
+    font-size: .4rem;
+    margin-right: .3rem;
+    margin-top: .3rem;
+  }
 </style>
 <template>
   <div>
@@ -28,7 +63,7 @@
           <div class="swiper-container">
             <div class="swiper-wrapper">
               <div class="swiper-slide" v-for="image in building_images">
-                <a href="javascript:;">
+                <a href="javascript:;" @click="enlarge">
                   <img :src="$prefix + '/' + image" alt="">
                 </a>
               </div>
@@ -40,14 +75,15 @@
         </div>
       </div>
 
+
       <!--office info-->
       <div class="office-info border-tb">
         <div class="banner-text">
-          <p v-if="address" class="ellipsis" :title="address">
+          <p v-if="address" :title="address">
             <span class="detail-icon" style="color:#5b5b5b;"></span>{{address}}</p>
         </div>
         <div class="house_msg_tit clearfix">
-          <div><i></i><span v-text="price" style="color:#e01222"></span><span v-if="price != null">元/㎡/天</span></div>
+          <div><i></i>市场均价 <span v-text="price" style="color:#e01222"></span><span v-if="price != null">元/㎡/天</span></div>
           <div><i></i><span v-text="total_items" style="color:#e01222"></span><span v-if="total_items != null">套房源可租</span></div>
           <span class="hou_line"></span>
         </div>
@@ -81,10 +117,10 @@
                      :class="{active:areaActive == index}"
                      class="last"
                      @click="sel_area_list($event)"
-                >>{{item.minnum}}m²
+                >{{item.chqxz}}
                 </div>
                 <div v-else :class="{active:areaActive == index}"
-                     @click="sel_area_list($event)">{{item.minnum}}-{{item.maxnum}}m²
+                     @click="sel_area_list($event)">{{item.chqxz}}
                 </div>
               </template>
               <a></a>
@@ -99,10 +135,22 @@
                   <img v-else :src="$prefix + '/upload/2017-08-27/6404b4de960b81fc5403c870aefcea34.png'" alt="">
                 </div>
                 <div class="dz_msg fl">
-                  <span>{{item1.zdh}} - {{item1.fybh}}</span>
-                  <span><i v-text="item1.monthly_price==='0.0'?'':item1.monthly_price"></i><i>元/月</i></span>
-                  <span><i v-text="(item1.housing_area==='0.0'?'':item1.housing_area)+'㎡'"></i><i v-text="item1.fjzt"></i></span>
-                  <span v-text="item1.workstation+'个工位'"></span>
+                  <!--<span >{{item.fybh}}</span>
+                  <span v-else>{{item.zdh}} - {{item.fybh}}</span>-->
+                  <span>
+                    <i v-if="item1.zdh.indexOf('独栋')> -1">{{item1.fybh}}</i>
+                    <i v-else>{{item1.zdh}} - {{item1.fybh}}</i>
+                  </span>
+                  <span style="border:0px solid red;height:.5rem;"></span>
+                  <span>
+                       <i v-text="item1.daily_price==='0.0'?'':item1.daily_price"></i><i>元/㎡·天</i>
+                      <i v-text="item1.monthly_price==='0.0'?'':item1.monthly_price"></i><i>元/月</i>
+                  </span>
+                  <span>
+                      <i v-text="(item1.housing_area==='0.0'?'':item1.housing_area)+'㎡'"></i>
+                      <i v-text="item1.workstation+'个工位'"></i>
+                      <i v-text="item1.fjzt"></i>
+                  </span>
                 </div>
               </router-link>
             </div>
@@ -145,6 +193,28 @@
       </div>
     </section>
     <!--context end-->
+    <!--点击出现放大图片-->
+    <div v-show="large" class="large">
+      <div class="clear" @click="cancel">x</div>
+      <div style="clear: both;"></div>
+      <div class="detail-container">
+        <!--banner-->
+        <div id="slideBox" class="slideBox">
+          <div class="swiper-container">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide" v-for="image in building_images" style="transition-duration: 0ms !important;">
+                <a href="javascript:;" @click="enlarge">
+                  <img :src="$prefix + '/' + image" alt="">
+                </a>
+              </div>
+            </div>
+            <!--<div class="banner-page">
+              <span class="pageState"><span id="picIndex">1</span>/{{building_images.length}}</span>
+            </div>-->
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -154,8 +224,10 @@
   import {Indicator} from 'mint-ui';
   import {InfiniteScroll} from 'mint-ui';
   import {Toast} from 'mint-ui';
+  import { Swipe, SwipeItem } from 'mint-ui';
 
   import '../resources/plugin/swiper/js/swiper.min.js';
+
 
   export default {
     components: {
@@ -165,6 +237,8 @@
     },
     data () {
       return {
+        ovfl:null,
+        large:false,
         building_id: '',
         address: '',  //楼盘地址
         price: '',  //单价
@@ -203,16 +277,27 @@
       }
     },
     methods: {
+      cancel(){
+          $("body").css({"overflow":"scroll"});
+          $("html").css({"overflow":"scroll"});
+          /*$("body").removeClass({"overflow":"auto"});
+          $("html").removeClass({"overflow":"auto"});*/
+          this.large = false;
+      },
+      enlarge(){
+          $("body").css({"overflow":"hidden"});
+          $("html").css({"overflow":"hidden"});
+          this.large = true;
+      },
       //获取筛选条件
       getSortList(){
         var _this = this;
         this.$http.post(
-          this.$api + "/yhcms/web/jcsj/getTj.do"
+          this.$api + "/yhcms/web/jcsj/getChqxz.do"
         ).then(function (res) {
           var result = JSON.parse(res.bodyText);
           if (result.success) {
-            _this.area_arr = result.data.range_areas;
-
+            _this.area_arr = result.data;
             var all_area = {
               code: "area_all",
               name: "全部"
@@ -377,24 +462,28 @@
       sel_area_list(e){
         $(e.target).addClass('active').siblings().removeClass('active');
 
-        this.area = [];
+        this.area = "";
         var min = 0, max = 0, sort_two_single = 1;
         if ($(e.target).html() == '全部') {
           this.area = "";
-
-        } else if ($(e.target).hasClass('last')) {
+        } /*else if ($(e.target).hasClass('last')) {
           this.area = [];
+            console.log(this.area);
           min = Math.floor($(e.target).html().match(/\d+/g)[0]);
           max = 1000000;
           this.area.push(min);
           this.area.push(max);
-        } else {
-          this.area = [];
-          var area_fw = $(e.target).html().split('-');
-          min = Math.floor(area_fw[0]);
-          max = Math.floor(area_fw[1].match(/\d+/g)[0]);
-          this.area.push(min);
-          this.area.push(max);
+            console.log(this.area);
+        }*/else {
+          this.area = "";
+          var area_fw = $(e.target).html()/*.split('-')*/;
+         /* min = Math.floor(area_fw[0]);*/
+           /* min = $.trim(area_fw);*/
+            this.area = $.trim(area_fw);
+            /*console.log(this.area);*/
+          //max = Math.floor(area_fw[1].match(/\d+/g)[0]);
+          /*this.area.push(min);*/
+          //this.area.push(max);
         }
         this.buildList = [];
         this.curr_page = 1;
