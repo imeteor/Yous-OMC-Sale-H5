@@ -88,23 +88,25 @@
           </div>
         </div>
       </div>
-      <div class="build_price_wrap clearfix">
-        <span v-if="zdh.indexOf('独栋') > -1"><i v-text="fybh" style="color:black"></i></span>
+      <div class="build_price_wrap clearfix" style="font-size: 0.35rem;">
+        <span v-if="zdh.indexOf('独栋') > -1" style="font-size: 1rem !important;font-weight: 900 !important;"><i v-text="fybh" style="color:black;"></i></span>
         <span v-else><i v-text="zdh" style="color:black"></i> - <i v-text="fybh" style="color:black"></i></span>
-        <span><i v-text="monthly_price" style="color:#e01222"></i><i v-if="monthly_price != null" style="color:black">元/月</i></span>
-        <span v-text="daily_price" style="color:#e01222"></span><i v-if="daily_price != null">元/㎡/天</i>
       </div>
 
       <div class="build_common_msg_wrap">
+       <!-- <span><i v-text="monthly_price" style="color:#e01222"></i><i v-if="monthly_price != null" style="color:black">元/月</i></span>
+        <span v-text="daily_price" style="color:#e01222"></span><i v-if="daily_price != null">元/㎡/天</i>-->
+        <a href="javascript:;"><span style="color:black">单价</span><i v-text="daily_price" style="color:#5b5b5b;"></i></a>
+        <a href="javascript:;"><span style="color:black">月租金</span><i v-text="monthly_price" style="color:#5b5b5b;"></i></a>
         <a href="javascript:;"><span style="color:black">面积</span><i v-text="room_area" style="color:#5b5b5b;"></i></a>
-        <a href="javascript:;"><span style="color:black">工位</span><i v-text="workstation" style="color:#5b5b5b;"></i></a>
-        <a href="javascript:;"><span style="color:black">房间状态</span><i v-text="fjzt" style="color:#5b5b5b;"></i></a>
         <span class="common_ver_line"></span>
         <span class="common_ver_line second"></span>
       </div>
 
       <div class="weixin_wrap">
         <div class="weixin_head clearfix">
+          <span style="color:black">可容工位：<i v-text="workstation" style="color:#5b5b5b;"></i></span>
+          <span style="color:black">房间状态：<i v-text="fjzt" style="color:#5b5b5b;"></i></span>
           <span>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层：<i v-text="locat_floor" style="color: #5b5b5b;"></i></i></span>
           <span>可否注册：<i v-text="zc" style="color: #5b5b5b;"></i></span>
           <span>层&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;高：<i v-text="fjcg" style="color: #5b5b5b;"></i></span>
@@ -208,8 +210,8 @@
             if (result.data) {
               const data = result.data[0];
               $('title').html(result.data[0].topic);
-              _this.daily_price = !data.dj ? '暂无数据' : data.dj;
-              _this.monthly_price = !data.yzj ? '暂无数据' : data.yzj;
+              _this.daily_price = !data.dj ? '暂无数据' : data.dj + '元/㎡/天';
+              _this.monthly_price = !data.yzj ? '暂无数据' : data.yzj + '元/月';
               _this.room_area = !data.fjmj ? '暂无数据' : data.fjmj + '㎡';
               _this.workstation = data.krgw || '暂无数据';
               _this.floors = data.zglc || '暂无数据';
